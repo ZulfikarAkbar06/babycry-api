@@ -1,0 +1,414 @@
+{
+  "info": {
+    "name": "Baby Cry IoT API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "apiKey",
+      "value": ""
+    },
+    {
+      "key": "createdId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. GET semua data",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/cry-logs",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "cry-logs"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. GET detail (id=1)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/cry-logs/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "cry-logs",
+            "1"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. GET detail tidak ada (id=9999)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/cry-logs/9999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "cry-logs",
+            "9999"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code 404', function () { pm.response.to.have.status(404); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. POST data valid",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-KEY",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/cry-logs",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "cry-logs"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"device_id\": \"BABYCRY-001\",\n  \"is_crying\": true,\n  \"cry_type\": \"hungry\",\n  \"confidence\": 87.5,\n  \"sound_level\": 72.3,\n  \"temperature\": 28.4,\n  \"humidity\": 65.2,\n  \"duration_seconds\": 30,\n  \"notes\": \"Uji coba dari Postman\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code 201', function () { pm.response.to.have.status(201); });",
+              "pm.collectionVariables.set('createdId', pm.response.json().data.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. POST data tidak valid (validasi)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-KEY",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/cry-logs",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "cry-logs"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"device_id\": \"\",\n  \"cry_type\": \"marah\",\n  \"confidence\": 150\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code 422', function () { pm.response.to.have.status(422); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. PUT ubah data",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-KEY",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/cry-logs/{{createdId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "cry-logs",
+            "{{createdId}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"device_id\": \"BABYCRY-001\",\n  \"cry_type\": \"tired\",\n  \"confidence\": 91.0,\n  \"notes\": \"Diubah lewat PUT\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. DELETE hapus data",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-KEY",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/cry-logs/{{createdId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "cry-logs",
+            "{{createdId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. GET data terbaru",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/cry-logs/latest",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "cry-logs",
+            "latest"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. GET ringkasan 24 jam",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/cry-logs/summary",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "cry-logs",
+            "summary"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. GET health check",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "health"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
