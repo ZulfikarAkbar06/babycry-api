@@ -1,13 +1,16 @@
 FROM php:8.4-apache
 
-# Ekstensi PHP: PostgreSQL (Neon), MySQL (opsional), dan pendukung Laravel
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        git unzip libpq-dev libzip-dev \
-    && docker-php-ext-install pdo_pgsql pdo_mysql bcmath zip \
-    && a2enmod rewrite headers \
-    && rm -rf /var/lib/apt/lists/*
+   RUN apt-get update && apt-get install -y --no-install-recommends \
+           git unzip libpq-dev libzip-dev \
+       && docker-php-ext-install pdo_pgsql pdo_mysql bcmath zip \
+       && a2enmod rewrite headers \
+       && rm -rf /var/lib/apt/lists/*
 
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+   # Pastikan hanya satu MPM yang aktif (Railway kadang memuat lebih dari satu)
+   RUN rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.* \
+       && a2enmod mpm_prefork
+
+   COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Document root harus mengarah ke folder public/
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
